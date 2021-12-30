@@ -1,20 +1,35 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ThemeProvider } from './src/components/Theme';
+
+import { LoadAssets } from './src/components';
+import { AppRoutes } from './src/components/Navigation';
+import { AuthenticationNavigator, assets as authAssets } from './src/Authentication';
+import { HomeNavigator, assets as homeAssets } from './src/Home';
+
+const assets = [...authAssets, ...homeAssets];
+
+const fonts = {
+  "SFProDisplay-Bold": require("./assets/fonts/SF-Pro-Display-Bold.otf"),
+  "SFProDisplay-Semibold": require("./assets/fonts/SF-Pro-Display-Semibold.otf"),
+  "SFProDisplay-Medium": require("./assets/fonts/SF-Pro-Display-Medium.otf"),
+  "SFProDisplay-Regular": require("./assets/fonts/SF-Pro-Display-Regular.otf"),
+};
+
+const AppStack = createStackNavigator<AppRoutes>();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ThemeProvider>
+      <LoadAssets {...{ fonts, assets }}>
+        <SafeAreaProvider>
+          <AppStack.Navigator headerMode="none">
+            <AppStack.Screen name="Authentication" component={AuthenticationNavigator} />
+            <AppStack.Screen name="Home" component={HomeNavigator} />
+          </AppStack.Navigator>
+        </SafeAreaProvider>
+      </LoadAssets>
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
