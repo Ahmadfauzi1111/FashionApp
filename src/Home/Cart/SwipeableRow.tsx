@@ -7,6 +7,7 @@ import Animated, {
     useSharedValue,
     withSpring,
     withTiming,
+    runOnJS
     } from "react-native-reanimated";
     import { snapPoint } from "react-native-redash";
     import { LinearGradient } from "expo-linear-gradient";
@@ -46,11 +47,12 @@ import Animated, {
         },
         onEnd: ({ velocityX }) => {
         const dest = snapPoint(translateX.value, velocityX, snapPoints);
-        translateX.value = withSpring(
-            (dest) => {
-            if (dest === finalDestination) {
-                height.value = withTiming(0, { duration: 250 }, () => deleteItem());
-            }
+        translateX.value = withSpring(dest, {}, (finished) => {
+                if (finished) {
+                    if (dest === finalDestination) {
+                        runOnJS(deleteItem)();
+                    }
+                }
             }
         );
         },

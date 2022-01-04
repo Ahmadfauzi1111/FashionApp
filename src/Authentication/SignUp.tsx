@@ -9,18 +9,19 @@ import TextInput  from '../components/Form/TextInput';
 import Footer from './components/Footer';
 
 const SignUpSchema = Yup.object().shape({
+    username: Yup.string().required('Required'),
     email: Yup.string().email('Invalid email').required('Required'),
     password: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Required'),
     confirmPassword: Yup.string().equals([Yup.ref('password')], "Passwords don't match").required('Required')
 });
 
 const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
-    const { 
+    const {
         handleChange, handleBlur, handleSubmit,
-        errors, touched 
+        errors, touched
     } = useFormik({
         validationSchema: SignUpSchema,
-        initialValues: { email: '', password: '', confirmPassword: '' },
+        initialValues: { username: '', email: '', password: '', confirmPassword: '' },
         onSubmit: () => navigation.navigate('Home')
     });
     const password = useRef<RNTextInput>(null);
@@ -35,11 +36,25 @@ const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
             </Text>
             <Box>
                 <Box marginBottom="m">
-                    <TextInput 
-                        icon="mail" 
+                    <TextInput
+                        icon="lock"
+                        placeholder="Enter your username"
+                        onChangeText={handleChange('username')}
+                        onBlur={handleBlur('username')}
+                        error={errors.username}
+                        touched={touched.username}
+                        autoCompleteType="username"
+                        returnKeyType="next"
+                        returnKeyLabel="next"
+                        onSubmitEditing={() => password.current?.focus()}
+                    />
+                </Box>
+                <Box marginBottom="m">
+                    <TextInput
+                        icon="mail"
                         placeholder="Enter your email"
                         onChangeText={handleChange('email')}
-                        onBlur={handleBlur('email')} 
+                        onBlur={handleBlur('email')}
                         error={errors.email}
                         touched={touched.email}
                         autoCompleteType="email"
@@ -49,10 +64,10 @@ const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
                     />
                 </Box>
                 <Box marginBottom="m">
-                    <TextInput 
+                    <TextInput
                         ref={password}
-                        icon="lock" 
-                        placeholder="Enter your password" 
+                        icon="lock"
+                        placeholder="Enter your password"
                         onChangeText={handleChange('password')}
                         onBlur={handleBlur('password')}
                         error={errors.password}
@@ -65,10 +80,10 @@ const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
                         secureTextEntry
                     />
                 </Box>
-                <TextInput 
+                <TextInput
                     ref={confirmPassword}
-                    icon="lock" 
-                    placeholder="Confirm your password" 
+                    icon="lock"
+                    placeholder="Confirm your password"
                     onChangeText={handleChange('confirmPassword')}
                     onBlur={handleBlur('confirmPassword')}
                     error={errors.confirmPassword}

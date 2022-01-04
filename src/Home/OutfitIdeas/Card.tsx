@@ -12,6 +12,7 @@ import Animated, {
     useAnimatedGestureHandler,
     useSharedValue,
     withSpring,
+    runOnJS
     } from "react-native-reanimated";
     import { mix, mixColor, snapPoint } from "react-native-redash";
 
@@ -49,10 +50,16 @@ import Animated, {
         },
         onEnd: ({ velocityX, velocityY }) => {
         translateY.value = withSpring(0, {
-            velocity: velocityY
-        })
+            velocity: velocityY,
+        });
         const dest = snapPoint(translateX.value, velocityX, snapPoints);
-        translateX.value = withSpring(dest)
+        translateX.value = withSpring(dest, {}, (finished) => {
+            if (finished) {
+            if (dest !== 0) {
+                runOnJS(onSwipe)();
+            }
+            }
+        });
         },
     });
 
