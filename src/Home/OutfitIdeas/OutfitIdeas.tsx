@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { sub } from "react-native-reanimated";
 import { useTiming } from "react-native-redash";
 
@@ -7,6 +7,7 @@ import { HomeNavigationProps } from "../../components/Navigation";
 import Background from "./Background";
 import Categories from "./Categories";
 import Card from "./Card";
+import axios, { AxiosError } from 'axios';
 
 const cards = [
   { index: 3, source: require("../../Authentication/assets/4.png") },

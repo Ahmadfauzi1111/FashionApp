@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, SyntheticEvent } from 'react';
 import { TextInput as RNTextInput } from 'react-native';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -7,22 +7,38 @@ import { Container, Button, Text, Box } from '../components';
 import { AuthNavigationProps } from '../components/Navigation';
 import TextInput  from '../components/Form/TextInput';
 import Footer from './components/Footer';
+import axios, { AxiosError } from 'axios';
+import { CommonActions } from "@react-navigation/native";
 
 const SignUpSchema = Yup.object().shape({
-    username: Yup.string().required('Required'),
+    nama: Yup.string().required('Required'),
     email: Yup.string().email('Invalid email').required('Required'),
     password: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Required'),
     confirmPassword: Yup.string().equals([Yup.ref('password')], "Passwords don't match").required('Required')
 });
 
 const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
+
     const {
         handleChange, handleBlur, handleSubmit,
         errors, touched
     } = useFormik({
         validationSchema: SignUpSchema,
-        initialValues: { username: '', email: '', password: '', confirmPassword: '' },
-        onSubmit: () => navigation.navigate('Home')
+        initialValues: { nama: '', email: '', password: '', confirmPassword: '' },
+        onSubmit: async (data)=> {
+            await axios.post('http://192.168.1.5:3000/api/register', {
+                nama: data.nama,
+                email: data.email,
+                password: data.password,
+                password_confirm: data.confirmPassword,
+            });
+            navigation.dispatch(
+                CommonActions.reset({
+                index: 0,
+                routes: [{ name: "SignUpsuccess" }],
+                })
+            )
+        }
     });
     const password = useRef<RNTextInput>(null);
     const confirmPassword = useRef<RNTextInput>(null);
@@ -39,11 +55,11 @@ const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
                     <TextInput
                         icon="lock"
                         placeholder="Enter your username"
-                        onChangeText={handleChange('username')}
-                        onBlur={handleBlur('username')}
-                        error={errors.username}
-                        touched={touched.username}
-                        autoCompleteType="username"
+                        onChangeText={handleChange('nama')}
+                        onBlur={handleBlur('nama')}
+                        error={errors.nama}
+                        touched={touched.nama}
+                        autoCompleteType="name"
                         returnKeyType="next"
                         returnKeyLabel="next"
                         onSubmitEditing={() => password.current?.focus()}

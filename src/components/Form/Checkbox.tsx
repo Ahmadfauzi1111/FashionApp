@@ -13,15 +13,15 @@ const Checkbox = ({ label, checked, onChange }: CheckboxProps) => {
     return (
         <BorderlessButton onPress={() => onChange()} style={{ justifyContent: 'center' }}>
             <Box flexDirection="row">
-                <Box 
-                    height={20} 
-                    width={20} 
+                <Box
+                    height={20}
+                    width={20}
                     marginRight="s"
-                    alignItems="center" 
+                    alignItems="center"
                     justifyContent="center"
                     borderRadius="s"
                     borderWidth={1}
-                    borderColor="primary" 
+                    borderColor="primary"
                     backgroundColor={checked ? "primary" : "background"}
                 >
                     <Icon name="check" color="white"/>

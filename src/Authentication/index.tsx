@@ -8,6 +8,7 @@ import Login from './Login';
 import SignUp from './SignUp';
 import ForgotPassword from './ForgotPassword';
 import PasswordChanged from './PasswordChanged';
+import SignUpsuccess from './SignUpsuccess';
 
 export const assets = [...welcomeAssets];
 
@@ -21,6 +22,7 @@ export const AuthenticationNavigator = () => {
       <AuthenticationStack.Screen name="SignUp" component={SignUp} />
       <AuthenticationStack.Screen name="ForgotPassword" component={ForgotPassword} />
       <AuthenticationStack.Screen name="PasswordChanged" component={PasswordChanged} />
+      <AuthenticationStack.Screen name="SignUpsuccess" component={SignUpsuccess} />
     </AuthenticationStack.Navigator>
   )
 }

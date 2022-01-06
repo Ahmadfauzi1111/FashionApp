@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect, useContext, useMemo, useReducer } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from './src/components/Theme';
@@ -7,6 +7,9 @@ import { LoadAssets } from './src/components';
 import { AppRoutes } from './src/components/Navigation';
 import { AuthenticationNavigator, assets as authAssets } from './src/Authentication';
 import { HomeNavigator, assets as homeAssets } from './src/Home';
+import axios, { AxiosError } from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const assets = [...authAssets, ...homeAssets];
 
@@ -25,7 +28,10 @@ export default function App() {
       <LoadAssets {...{ fonts, assets }}>
         <SafeAreaProvider>
           <AppStack.Navigator headerMode="none">
-            <AppStack.Screen name="Authentication" component={AuthenticationNavigator} />
+            <AppStack.Screen
+              name="Authentication"
+              component={AuthenticationNavigator}
+            />
             <AppStack.Screen name="Home" component={HomeNavigator} />
           </AppStack.Navigator>
         </SafeAreaProvider>

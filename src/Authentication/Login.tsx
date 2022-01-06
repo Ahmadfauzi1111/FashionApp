@@ -3,13 +3,15 @@ import { TextInput as RNTextInput } from "react-native";
 import { CommonActions } from "@react-navigation/native";
 import { BorderlessButton } from "react-native-gesture-handler";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 
 import { Container, Button, Text, Box } from "../components";
 import { AuthNavigationProps } from "../components/Navigation";
 import TextInput from "../components/Form/TextInput";
 import Checkbox from "../components/Form/Checkbox";
 import Footer from "./components/Footer";
+import axios, { AxiosError } from 'axios';
+import * as Yup from "yup";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
@@ -20,7 +22,7 @@ const LoginSchema = Yup.object().shape({
 });
 
 const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
-  const {
+const {
     handleChange,
     handleBlur,
     handleSubmit,
@@ -31,13 +33,18 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
   } = useFormik({
     validationSchema: LoginSchema,
     initialValues: { email: "", password: "", remember: false },
-    onSubmit: () =>
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "Home" }],
-        })
-      ),
+    onSubmit: async (data)=> {
+      const res = await axios.post('http://192.168.1.4:3000/api/login', {
+          email: data.email,
+          password: data.password
+      });
+      if (res.status===201) {
+        await AsyncStorage.setItem('datauser', JSON.stringify(res));
+        navigation.navigate(
+          'Home'
+      )
+      }
+  }
   });
   const password = useRef<RNTextInput>(null);
   const footer = (

@@ -17,12 +17,12 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>(({ icon, error, touche
     const themeColor = theme.colors[color];
 
     return (
-        <Box 
-            flexDirection="row" 
+        <Box
+            flexDirection="row"
             alignItems="center"
-            height={48} 
-            borderRadius="s" 
-            borderColor={color} 
+            height={48}
+            borderRadius="s"
+            borderColor={color}
             borderWidth={StyleSheet.hairlineWidth}
             padding="s"
         >
@@ -30,16 +30,16 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>(({ icon, error, touche
                 <Icon name={icon} size={16} color={themeColor} />
             </Box>
             <Box flex={1}>
-                <RNTextInput 
-                    underlineColorAndroid="transparent" 
-                    placeholderTextColor={themeColor} 
+                <RNTextInput
+                    underlineColorAndroid="transparent"
+                    placeholderTextColor={themeColor}
                     {...{ ref }}
                     {...props}
                 />
             </Box>
             {touched && (
-                <RoundIcon 
-                    name={!error ? "check" : "x"} 
+                <RoundIcon
+                    name={!error ? "check" : "x"}
                     size={SIZE}
                     backgroundColor={!error ? "primary" : 'danger'}
                     color="background"
