@@ -1,7 +1,6 @@
 import React, { useRef, SyntheticEvent } from 'react';
 import { TextInput as RNTextInput } from 'react-native';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 
 import { Container, Button, Text, Box } from '../components';
 import { AuthNavigationProps } from '../components/Navigation';
@@ -9,6 +8,9 @@ import TextInput  from '../components/Form/TextInput';
 import Footer from './components/Footer';
 import axios, { AxiosError } from 'axios';
 import { CommonActions } from "@react-navigation/native";
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 
 const SignUpSchema = Yup.object().shape({
     nama: Yup.string().required('Required'),
@@ -18,28 +20,24 @@ const SignUpSchema = Yup.object().shape({
 });
 
 const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
-
-    const {
-        handleChange, handleBlur, handleSubmit,
-        errors, touched
-    } = useFormik({
-        validationSchema: SignUpSchema,
-        initialValues: { nama: '', email: '', password: '', confirmPassword: '' },
-        onSubmit: async (data)=> {
-            await axios.post('http://192.168.1.4:3000/api/register', {
-                nama: data.nama,
-                email: data.email,
-                password: data.password,
-                password_confirm: data.confirmPassword,
-            });
-            navigation.dispatch(
-                CommonActions.reset({
-                index: 0,
-                routes: [{ name: "SignUpsuccess" }],
-                })
-            )
-        }
+    const { control, handleSubmit } = useForm({
+        resolver: yupResolver(SignUpSchema),
+        mode: "all",
     });
+    const onSubmit = async (data)=> {
+        await axios.post('http://192.168.1.4:3000/api/register', {
+            nama: data.nama,
+            email: data.email,
+            password: data.password,
+            password_confirm: data.confirmPassword,
+        });
+        navigation.dispatch(
+            CommonActions.reset({
+            index: 0,
+            routes: [{ name: "SignUpsuccess" }],
+            })
+        )
+    };
     const password = useRef<RNTextInput>(null);
     const confirmPassword = useRef<RNTextInput>(null);
     const footer = <Footer title="Already have an account?" action="Login here" onPress={() => navigation.navigate('Login')} />
@@ -52,67 +50,105 @@ const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
             </Text>
             <Box>
                 <Box marginBottom="m">
+                <Controller
+                control={control}
+                name="nama"
+                render={({
+                field: { onChange, onBlur, value },
+                fieldState: { isTouched, error },
+                }) => (
                     <TextInput
-                        icon="lock"
-                        placeholder="Enter your username"
-                        onChangeText={handleChange('nama')}
-                        onBlur={handleBlur('nama')}
-                        error={errors.nama}
-                        touched={touched.nama}
-                        autoCompleteType="name"
-                        returnKeyType="next"
-                        returnKeyLabel="next"
-                        onSubmitEditing={() => password.current?.focus()}
+                    icon="lock"
+                    placeholder="Enter your username"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    error={error}
+                    touched={isTouched}
+                    autoCompleteType="name"
+                    returnKeyType="next"
+                    returnKeyLabel="next"
+                    onSubmitEditing={() => password.current?.focus()}
                     />
+                )}
+                />
                 </Box>
                 <Box marginBottom="m">
-                    <TextInput
+                    <Controller
+                    control={control}
+                    name="email"
+                    render={({
+                    field: { onChange, onBlur, value },
+                    fieldState: { isTouched, error },
+                    }) => (
+                        <TextInput
                         icon="mail"
                         placeholder="Enter your email"
-                        onChangeText={handleChange('email')}
-                        onBlur={handleBlur('email')}
-                        error={errors.email}
-                        touched={touched.email}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        error={error}
+                        touched={isTouched}
                         autoCompleteType="email"
                         returnKeyType="next"
                         returnKeyLabel="next"
                         onSubmitEditing={() => password.current?.focus()}
+                        />
+                    )}
                     />
                 </Box>
                 <Box marginBottom="m">
-                    <TextInput
+                <Controller
+                    control={control}
+                    name="password"
+                    render={({
+                    field: { onChange, onBlur, value },
+                    fieldState: { isTouched, error },
+                    }) => (
+                        <TextInput
                         ref={password}
                         icon="lock"
                         placeholder="Enter your password"
-                        onChangeText={handleChange('password')}
-                        onBlur={handleBlur('password')}
-                        error={errors.password}
-                        touched={touched.password}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        error={error}
+                        touched={isTouched}
                         autoCompleteType="password"
-                        autoCapitalize="none"
                         returnKeyType="next"
                         returnKeyLabel="next"
                         onSubmitEditing={() => confirmPassword.current?.focus()}
                         secureTextEntry
+                        />
+                    )}
                     />
                 </Box>
-                <TextInput
-                    ref={confirmPassword}
-                    icon="lock"
-                    placeholder="Confirm your password"
-                    onChangeText={handleChange('confirmPassword')}
-                    onBlur={handleBlur('confirmPassword')}
-                    error={errors.confirmPassword}
-                    touched={touched.confirmPassword}
-                    autoCompleteType="password"
-                    autoCapitalize="none"
-                    returnKeyType="go"
-                    returnKeyLabel="go"
-                    onSubmitEditing={() => handleSubmit()}
-                    secureTextEntry
-                />
+                <Controller
+                    control={control}
+                    name="confirmPassword"
+                    render={({
+                    field: { onChange, onBlur, value },
+                    fieldState: { isTouched, error },
+                    }) => (
+                        <TextInput
+                        ref={confirmPassword}
+                        icon="lock"
+                        placeholder="Confirm your password"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        error={error}
+                        touched={isTouched}
+                        autoCompleteType="password"
+                        returnKeyType="next"
+                        returnKeyLabel="next"
+                        onSubmitEditing={() => handleSubmit()}
+                        secureTextEntry
+                        />
+                    )}
+                    />
                 <Box alignItems="center" marginTop="m">
-                    <Button variant="primary" label="Create your account" onPress={handleSubmit} />
+                    <Button variant="primary" label="Create your account" onPress={handleSubmit(onSubmit)} />
                 </Box>
             </Box>
         </Container>

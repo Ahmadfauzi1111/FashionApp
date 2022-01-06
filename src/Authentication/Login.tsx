@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 import { TextInput as RNTextInput } from "react-native";
 import { CommonActions } from "@react-navigation/native";
 import { BorderlessButton } from "react-native-gesture-handler";
-import { useFormik } from "formik";
 
 import { Container, Button, Text, Box } from "../components";
 import { AuthNavigationProps } from "../components/Navigation";
@@ -12,6 +11,8 @@ import Footer from "./components/Footer";
 import axios, { AxiosError } from 'axios';
 import * as Yup from "yup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
@@ -22,29 +23,19 @@ const LoginSchema = Yup.object().shape({
 });
 
 const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
-const {
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    values,
-    errors,
-    touched,
-    setFieldValue,
-  } = useFormik({
-    validationSchema: LoginSchema,
-    initialValues: { email: "", password: "", remember: false },
-    onSubmit: async (data)=> {
-      const res = await axios.post('http://192.168.1.4:3000/api/login', {
-          email: data.email,
-          password: data.password
-      });
-      if (res.status===201) {
-        await AsyncStorage.setItem('datauser', JSON.stringify(res));
-        navigation.navigate(
-          'Home'
-      )
-      }
-  }
+  const onSubmit = async (data)=> {
+    const res = await axios.post('http://192.168.1.4:3000/api/login', {
+        email: data.email,
+        password: data.password,
+    });
+    if (res.status===201) {
+      const a = await AsyncStorage.setItem('datauser', JSON.stringify(res));
+      navigation.navigate('Home')
+    }
+};
+  const { control, handleSubmit } = useForm({
+    resolver: yupResolver(LoginSchema),
+    mode: "all",
   });
   const password = useRef<RNTextInput>(null);
   const footer = (
@@ -65,45 +56,65 @@ const {
       </Text>
       <Box>
         <Box marginBottom="m">
-          <TextInput
-            icon="mail"
-            placeholder="Enter your email"
-            onChangeText={handleChange("email")}
-            onBlur={handleBlur("email")}
-            error={errors.email}
-            touched={touched.email}
-            autoCompleteType="email"
-            returnKeyType="next"
-            returnKeyLabel="next"
-            onSubmitEditing={() => password.current?.focus()}
+        <Controller
+            control={control}
+            name="email"
+            render={({
+              field: { onChange, onBlur, value },
+              fieldState: { isTouched, error },
+            }) => (
+              <TextInput
+                icon="mail"
+                placeholder="Enter your email"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                error={error}
+                touched={isTouched}
+                autoCompleteType="email"
+                returnKeyType="next"
+                returnKeyLabel="next"
+                onSubmitEditing={() => password.current?.focus()}
+              />
+            )}
           />
         </Box>
-        <TextInput
-          ref={password}
-          icon="lock"
-          placeholder="Enter your password"
-          onChangeText={handleChange("password")}
-          onBlur={handleBlur("password")}
-          error={errors.password}
-          touched={touched.password}
-          autoCompleteType="password"
-          autoCapitalize="none"
-          returnKeyType="go"
-          returnKeyLabel="go"
-          onSubmitEditing={() => handleSubmit()}
-          secureTextEntry
-        />
+        <Box marginBottom="m">
+        <Controller
+            control={control}
+            name="password"
+            render={({
+              field: { onChange, onBlur, value },
+              fieldState: { isTouched, error },
+            }) => (
+              <TextInput
+                icon="lock"
+                placeholder="Enter your password"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                error={error}
+                touched={isTouched}
+                autoCompleteType="password"
+                returnKeyType="next"
+                returnKeyLabel="next"
+                onSubmitEditing={() => password.current?.focus()}
+                secureTextEntry
+              />
+            )}
+          />
+        </Box>
         <Box
           flexDirection="row"
           justifyContent="space-between"
           marginVertical="s"
           alignItems="center"
         >
-          <Checkbox
+          {/* <Checkbox
             label="Remember me"
             checked={values.remember}
             onChange={() => setFieldValue("remember", !values.remember)}
-          />
+          /> */}
           <BorderlessButton
             onPress={() => navigation.navigate("ForgotPassword")}
           >
@@ -116,7 +127,7 @@ const {
           <Button
             variant="primary"
             label="Log into your account"
-            onPress={handleSubmit}
+            onPress={handleSubmit(onSubmit)}
           />
         </Box>
       </Box>
