@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { TextInput as RNTextInput } from "react-native";
 import { CommonActions } from "@react-navigation/native";
 import { BorderlessButton } from "react-native-gesture-handler";
@@ -13,6 +13,8 @@ import * as Yup from "yup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { AuthContext } from "../context/context";
+
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
@@ -23,6 +25,9 @@ const LoginSchema = Yup.object().shape({
 });
 
 const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
+
+
+
   const onSubmit = async (data)=> {
     const res = await axios.post('http://192.168.1.4:3000/api/login', {
         email: data.email,
@@ -37,7 +42,7 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
     resolver: yupResolver(LoginSchema),
     mode: "all",
   });
-  const password = useRef<RNTextInput>(null);
+  const passwords = useRef<RNTextInput>(null);
   const footer = (
     <Footer
       title="Don't have an account?"
@@ -45,6 +50,16 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
       onPress={() => navigation.navigate("SignUp")}
     />
   );
+
+  const { sigIn } = useContext(AuthContext)
+
+  // const [data, isData] = useState({
+  //   email: '',
+  //   password: ''
+  // })
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   return (
     <Container pattern={0} {...{ footer }}>
@@ -60,7 +75,7 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
             control={control}
             name="email"
             render={({
-              field: { onChange, onBlur, value },
+              field: { onChange, onBlur, email },
               fieldState: { isTouched, error },
             }) => (
               <TextInput
@@ -68,13 +83,13 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
                 placeholder="Enter your email"
                 onBlur={onBlur}
                 onChangeText={onChange}
-                value={value}
+                value={email}
                 error={error}
                 touched={isTouched}
                 autoCompleteType="email"
                 returnKeyType="next"
                 returnKeyLabel="next"
-                onSubmitEditing={() => password.current?.focus()}
+                onSubmitEditing={() => passwords.current?.focus()}
               />
             )}
           />
@@ -84,7 +99,7 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
             control={control}
             name="password"
             render={({
-              field: { onChange, onBlur, value },
+              field: { onChange, onBlur, password },
               fieldState: { isTouched, error },
             }) => (
               <TextInput
@@ -92,13 +107,13 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
                 placeholder="Enter your password"
                 onBlur={onBlur}
                 onChangeText={onChange}
-                value={value}
+                value={password}
                 error={error}
                 touched={isTouched}
                 autoCompleteType="password"
                 returnKeyType="next"
                 returnKeyLabel="next"
-                onSubmitEditing={() => password.current?.focus()}
+                onSubmitEditing={() => passwords.current?.focus()}
                 secureTextEntry
               />
             )}
@@ -127,7 +142,7 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
           <Button
             variant="primary"
             label="Log into your account"
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => {sigIn( email, password )}}
           />
         </Box>
       </Box>
