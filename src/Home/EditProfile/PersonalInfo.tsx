@@ -1,4 +1,5 @@
-import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 
 import { Box, Text } from '../../components';
@@ -10,7 +11,24 @@ const genders = [
   { value: "female", label: "Female" },
 ]
 
-const PersonalInfo = () => {return (
+const PersonalInfo = () => {
+  const [nama, setNama] = useState('')
+  const [email, setEmail] = useState('')
+  useEffect(() => {
+    const getuser = async () => {
+      const userToken = await AsyncStorage.getItem('userToken')
+      const parsed = JSON.parse(userToken)
+      console.log('user', parsed);
+      setNama(parsed.nama)
+      setEmail(parsed.email)
+    };
+    getuser()
+  },[])
+  useEffect(() => {
+    console.log('nama',nama)
+  },[nama])
+
+  return (
     <ScrollView>
       <Box padding="m">
         <Text variant="body" marginBottom="m">Account Information</Text>
@@ -20,6 +38,7 @@ const PersonalInfo = () => {return (
             placeholder="Name"
             autoCapitalize="none"
             autoCompleteType="name"
+            value={nama}
           />
         </Box>
         <Box marginBottom="m">

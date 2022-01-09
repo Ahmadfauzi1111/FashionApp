@@ -62,11 +62,6 @@ export default function App() {
 
   const authContext = useMemo(() => ({
     sigIn: async (email, password) => {
-      // let userToken;
-      // userToken = null;
-      // if( email=== 'A@gmail.com' && password=== 'pass' ){
-      //   userToken = 'abcd'
-      // }
       let res;
       try {
           res = await axios.post('http://192.168.1.4:3000/api/login', {
@@ -87,17 +82,18 @@ export default function App() {
       let res;
       try {
           res = await axios.post('http://192.168.1.4:3000/api/logout');
+          if(res?.status === 201){
+            await AsyncStorage.removeItem('userToken');
+            console.log('logout', res?.status)
+            dispatch({ type: 'LOGOUT' })
+          }
       } catch (error) {
       }
-      console.log('logout', res?.status)
-      if(res?.status === 201){
-        await AsyncStorage.removeItem('userToken');
-        dispatch({ type: 'LOGOUT' })
-      }
     },
-    sigUp: () => {
-      setUserToken('abcd'),
-      setIsLoading(false)
+    getUser: async () => {
+      const userToken = await AsyncStorage.getItem('userToken')
+      // const parsed = JSON.parse(userToken)
+      return JSON.parse(userToken)
     },
   }), [])
 
