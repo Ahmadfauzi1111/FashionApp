@@ -55,6 +55,7 @@ const theme = createTheme({
     m: 10,
     l: 25,
     xl: 75,
+    xxl: 290
   },
   textVariants: {
     hero: {

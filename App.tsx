@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useContext, useMemo, useReducer } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createStackNavigator } from '@react-navigation/stack';
+import axios from 'axios';
+import React, { useContext, useEffect, useMemo, useReducer, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ThemeProvider } from './src/components/Theme';
 
+import { assets as authAssets, AuthenticationNavigator } from './src/Authentication';
 import { LoadAssets } from './src/components';
 import { AppRoutes } from './src/components/Navigation';
-import { AuthenticationNavigator, assets as authAssets } from './src/Authentication';
-import { HomeNavigator, assets as homeAssets } from './src/Home';
-import axios, { AxiosError } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ActivityIndicator, View } from 'react-native';
+import { ThemeProvider } from './src/components/Theme';
 import { AuthContext } from './src/context/context';
+import { assets as homeAssets, HomeNavigator } from './src/Home';
 
 
 const assets = [...authAssets, ...homeAssets];
@@ -25,8 +25,6 @@ const fonts = {
 const AppStack = createStackNavigator<AppRoutes>();
 
 export default function App() {
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [userToken, setUserToken] = useState(null);
 
   const initialLoginState = {
     isLoading: true,
@@ -43,6 +41,7 @@ export default function App() {
           isLoading: false
         };
       case 'LOGIN':
+
         return {
           ...prevState,
           email: action.id,
@@ -62,22 +61,39 @@ export default function App() {
   const [loginState, dispatch] = useReducer(loginReducer, initialLoginState);
 
   const authContext = useMemo(() => ({
-    sigIn: (email, password) => {
-      // setUserToken('abcd'),
-      // setIsLoading(false)
-      let userToken;
-      userToken = null;
-      if( email=== 'A@gmail.com' && password=== 'pass' ){
-        userToken = 'abcd'
+    sigIn: async (email, password) => {
+      // let userToken;
+      // userToken = null;
+      // if( email=== 'A@gmail.com' && password=== 'pass' ){
+      //   userToken = 'abcd'
+      // }
+      let res;
+      try {
+          res = await axios.post('http://192.168.1.4:3000/api/login', {
+          email,
+          password
+        });
+      } catch (error) {
+
       }
-      console.log(email, password);
-      console.log('user token', userToken)
-      dispatch({ type: 'LOGIN', id: email, token: userToken })
+      if(res?.status === 201){
+        await AsyncStorage.setItem('userToken', JSON.stringify(res.data));
+        const userToken = await AsyncStorage.getItem('userToken')
+        console.log('Login',userToken);
+        dispatch({ type: 'LOGIN', id: email, token: userToken })
+      }
     },
-    sigOut: () => {
-      // setUserToken(null),
-      // setIsLoading(false)
-      dispatch({ type: 'LOGOUT' })
+    sigOut: async () => {
+      let res;
+      try {
+          res = await axios.post('http://192.168.1.4:3000/api/logout');
+      } catch (error) {
+      }
+      console.log('logout', res?.status)
+      if(res?.status === 201){
+        await AsyncStorage.removeItem('userToken');
+        dispatch({ type: 'LOGOUT' })
+      }
     },
     sigUp: () => {
       setUserToken('abcd'),
@@ -86,12 +102,20 @@ export default function App() {
   }), [])
 
   useEffect(() => {
-    setTimeout(() => {
-      // setIsLoading(false)
-      dispatch({ type: 'RETRIEVE_TOKEN', token: 'abcd' })
-    }, 1000)
-  }, [])
+    const bootstrapAsync = async () => {
+      let userToken;
 
+      try {
+        // await AsyncStorage.removeItem('userToken')
+        userToken = await AsyncStorage.getItem('userToken');
+        console.log('useEfect',userToken);
+      } catch (e) {
+      }
+      dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });
+    };
+
+    bootstrapAsync();
+  }, []);
 if(loginState.isLoading){
   return(
     <View style={{ flex:1, justifyContent: "center", alignItems:"center" }}>
@@ -106,7 +130,7 @@ if(loginState.isLoading){
       <LoadAssets {...{ fonts, assets }}>
         <SafeAreaProvider>
           <AppStack.Navigator headerMode="none">
-            { loginState.userToken !== null ? (
+            { loginState.userToken === null ? (
               <AppStack.Screen
               name="Authentication"
               component={AuthenticationNavigator}

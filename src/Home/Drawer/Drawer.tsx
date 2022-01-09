@@ -1,11 +1,10 @@
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 import React, { useContext } from 'react';
 import { Dimensions, Image } from 'react-native';
-import { useNavigation, DrawerActions, CommonActions } from '@react-navigation/native';
 
 import { Box, Header, Text, useTheme } from '../../components';
-import DrawerItem, { DrawerItemProps } from './DrawerItem';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../../context/context';
+import DrawerItem, { DrawerItemProps } from './DrawerItem';
 
 export const assets = [require("./assets/drawer.png")];
 const { width } = Dimensions.get('window');
@@ -18,6 +17,7 @@ const Drawer = () => {
   const items: DrawerItemProps[] = [
     { icon: "zap", label: "Outfit Ideas", screen: "OutfitIdeas", color: "primary" },
     { icon: "heart", label: "Favorite Outfits", screen: "FavoriteOutfits", color: "drawer1" },
+    { icon: "star", label: "Item", screen: "Item", color: "info" },
     { icon: "user", label: "Edit Profile", screen: "EditProfile", color: "drawer2" },
     { icon: "clock", label: "Transaction History", screen: "TransactionHistory", color: "drawer3" },
     { icon: "settings", label: "Notification Settings", screen: "Settings", color: "drawer4" },
@@ -28,6 +28,11 @@ const Drawer = () => {
       , color: "secondary"
     },
   ]
+  const picture = {
+    src: require('./assets/1.png'),
+    width: 150,
+    height: 150,
+  }
   const theme = useTheme();
   const navigation = useNavigation();
 
@@ -65,15 +70,26 @@ const Drawer = () => {
           justifyContent="center"
           padding="xl"
         >
-          <Box
-            position="absolute"
-            left={DRAWER_WIDTH / 2 - 50}
-            top={-50}
-            backgroundColor="primary"
+          <Box 
+            position="absolute" 
+            left={DRAWER_WIDTH / 2 - 45} 
+            top={-50} 
+            // backgroundColor="primary"
             style={{ borderRadius: 50 }}
-            width={100}
-            height={100}
+            width={90}
+            height={90}
+          >
+            <Image 
+            source={picture.src}
+            style={{ 
+              width: width - theme.borderRadii.xxl, 
+              height: ((width - theme.borderRadii.xxl) * picture.height) / picture.width,
+              top: -18,
+              left: -15,
+              borderRadius: theme.borderRadii.xl
+            }}
           />
+          </Box>
           <Box marginVertical="m">
             <Text variant="title1" textAlign="center">Ahmad Fauzi</Text>
             <Text variant="body" textAlign="center">ahmadfauziridlwan20@gmail.com</Text>

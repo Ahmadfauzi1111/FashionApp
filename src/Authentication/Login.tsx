@@ -27,16 +27,17 @@ const LoginSchema = Yup.object().shape({
 const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
 
 
-
+  const { sigIn } = useContext(AuthContext)
   const onSubmit = async (data)=> {
-    const res = await axios.post('http://192.168.1.4:3000/api/login', {
-        email: data.email,
-        password: data.password,
-    });
-    if (res.status===201) {
-      const a = await AsyncStorage.setItem('datauser', JSON.stringify(res));
-      navigation.navigate('Home')
-    }
+    sigIn(data.email, data.password)
+    // const res = await axios.post('http://192.168.1.4:3000/api/login', {
+    //     email: data.email,
+    //     password: data.password,
+    // });
+    // if (res.status===201) {
+    //   const a = await AsyncStorage.setItem('datauser', JSON.stringify(res));
+    //   navigation.navigate('Home')
+    // }
 };
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(LoginSchema),
@@ -51,15 +52,14 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
     />
   );
 
-  const { sigIn } = useContext(AuthContext)
 
   // const [data, isData] = useState({
   //   email: '',
   //   password: ''
   // })
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
 
   return (
     <Container pattern={0} {...{ footer }}>
@@ -75,7 +75,7 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
             control={control}
             name="email"
             render={({
-              field: { onChange, onBlur, email },
+              field: { onChange, onBlur, value },
               fieldState: { isTouched, error },
             }) => (
               <TextInput
@@ -83,7 +83,7 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
                 placeholder="Enter your email"
                 onBlur={onBlur}
                 onChangeText={onChange}
-                value={email}
+                value={value}
                 error={error}
                 touched={isTouched}
                 autoCompleteType="email"
@@ -99,7 +99,7 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
             control={control}
             name="password"
             render={({
-              field: { onChange, onBlur, password },
+              field: { onChange, onBlur, value },
               fieldState: { isTouched, error },
             }) => (
               <TextInput
@@ -107,7 +107,7 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
                 placeholder="Enter your password"
                 onBlur={onBlur}
                 onChangeText={onChange}
-                value={password}
+                value={value}
                 error={error}
                 touched={isTouched}
                 autoCompleteType="password"
@@ -142,7 +142,7 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
           <Button
             variant="primary"
             label="Log into your account"
-            onPress={() => {sigIn( email, password )}}
+            onPress= {handleSubmit(onSubmit)}
           />
         </Box>
       </Box>

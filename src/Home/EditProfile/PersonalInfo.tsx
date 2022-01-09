@@ -1,9 +1,9 @@
-import React from "react";
-import { ScrollView } from "react-native";
+import React from 'react';
+import { ScrollView } from 'react-native';
 
-import { Box, Text } from "../../components";
-import TextInput from "../../components/Form/TextInput";
-import CheckboxGroup from "./CheckboxGroup";
+import { Box, Text } from '../../components';
+import TextInput from '../../components/Form/TextInput';
+import CheckboxGroup from './CheckboxGroup';
 
 const genders = [
   { value: "male", label: "Male" },
