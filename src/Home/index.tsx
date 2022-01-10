@@ -1,16 +1,18 @@
-import * as React from "react";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import * as React from 'react';
 
-import { HomeRoutes } from "../components/Navigation";
-import DrawerContent, { DRAWER_WIDTH } from "./Drawer";
+import { HomeRoutes } from '../components/Navigation';
+import Cart from './Cart';
+import DrawerContent, { DRAWER_WIDTH } from './Drawer';
+import EditProfile from './EditProfile';
+import FavoriteOutfits from './FavoriteOutfits';
+import DetailsScreen from './Item/DetailsScreen';
+import HomeScreen from './Item/HomeScreen';
+import OutfitIdeas from './OutfitIdeas/OutfitIdeas';
+import Settings from './Settings';
+import TransactionHistory from './TransactionHistory';
+
 export { assets } from "./Drawer";
-
-import OutfitIdeas from "./OutfitIdeas/OutfitIdeas";
-import FavoriteOutfits from "./FavoriteOutfits";
-import TransactionHistory from "./TransactionHistory";
-import EditProfile from "./EditProfile";
-import Settings from "./Settings";
-import Cart from "./Cart";
 
 const Drawer = createDrawerNavigator<HomeRoutes>();
 export const HomeNavigator = () => (
@@ -24,5 +26,7 @@ export const HomeNavigator = () => (
     <Drawer.Screen name="EditProfile" component={EditProfile} />
     <Drawer.Screen name="Settings" component={Settings} />
     <Drawer.Screen name="Cart" component={Cart} />
+    <Drawer.Screen name="HomeScreen" component={HomeScreen} />
+    <Drawer.Screen name="Details" component={DetailsScreen} />
   </Drawer.Navigator>
 );

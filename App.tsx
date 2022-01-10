@@ -64,7 +64,7 @@ export default function App() {
     sigIn: async (email, password) => {
       let res;
       try {
-          res = await axios.post('http://192.168.1.4:3000/api/login', {
+          res = await axios.post('http://192.168.1.5:3000/api/login', {
           email,
           password
         });
@@ -74,26 +74,27 @@ export default function App() {
       if(res?.status === 201){
         await AsyncStorage.setItem('userToken', JSON.stringify(res.data));
         const userToken = await AsyncStorage.getItem('userToken')
-        console.log('Login',userToken);
         dispatch({ type: 'LOGIN', id: email, token: userToken })
       }
     },
     sigOut: async () => {
       let res;
       try {
-          res = await axios.post('http://192.168.1.4:3000/api/logout');
+          res = await axios.post('http://192.168.1.5:3000/api/logout');
           if(res?.status === 201){
             await AsyncStorage.removeItem('userToken');
-            console.log('logout', res?.status)
             dispatch({ type: 'LOGOUT' })
           }
       } catch (error) {
       }
     },
     getUser: async () => {
-      const userToken = await AsyncStorage.getItem('userToken')
-      // const parsed = JSON.parse(userToken)
-      return JSON.parse(userToken)
+      try {
+        const userToken = await AsyncStorage.getItem('userToken')
+        return userToken ? JSON.parse(userToken) : {};
+      } catch (error) {
+        console.log(error);
+      }
     },
   }), [])
 
@@ -102,9 +103,7 @@ export default function App() {
       let userToken;
 
       try {
-        // await AsyncStorage.removeItem('userToken')
         userToken = await AsyncStorage.getItem('userToken');
-        console.log('useEfect',userToken);
       } catch (e) {
       }
       dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });

@@ -1,5 +1,5 @@
 import { DrawerActions, useNavigation } from '@react-navigation/native';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Dimensions, Image } from 'react-native';
 
 import { Box, Header, Text, useTheme } from '../../components';
@@ -17,7 +17,7 @@ const Drawer = () => {
   const items: DrawerItemProps[] = [
     { icon: "zap", label: "Outfit Ideas", screen: "OutfitIdeas", color: "primary" },
     { icon: "heart", label: "Favorite Outfits", screen: "FavoriteOutfits", color: "drawer1" },
-    { icon: "star", label: "Item", screen: "Item", color: "info" },
+    { icon: "star", label: "Item", screen: "HomeScreen", color: "info" },
     { icon: "user", label: "Edit Profile", screen: "EditProfile", color: "drawer2" },
     { icon: "clock", label: "Transaction History", screen: "TransactionHistory", color: "drawer3" },
     { icon: "settings", label: "Notification Settings", screen: "Settings", color: "drawer4" },
@@ -35,6 +35,17 @@ const Drawer = () => {
   }
   const theme = useTheme();
   const navigation = useNavigation();
+  const [nama, setNama] = useState('')
+  const [email, setEmail] = useState('')
+  const {getUser} = useContext(AuthContext)
+  useEffect(() => {
+    const getuser = async () => {
+      const userToken = await getUser()
+      setNama(userToken.nama)
+      setEmail(userToken.email)
+    };
+    getuser()
+  },[])
 
   return (
     <Box flex={1}>
@@ -90,9 +101,9 @@ const Drawer = () => {
             }}
           />
           </Box>
-          <Box marginVertical="m">
-            <Text variant="title1" textAlign="center">Ahmad Fauzi</Text>
-            <Text variant="body" textAlign="center">ahmadfauziridlwan20@gmail.com</Text>
+          <Box>
+            <Text variant="title1" marginTop="xxl" textAlign="center">{nama}</Text>
+            <Text variant="body1" textAlign="center">{email}</Text>
           </Box>
           {items.map(item => <DrawerItem key={item.icon} {...item} />)}
         </Box>

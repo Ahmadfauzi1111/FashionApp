@@ -1,32 +1,28 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 
-import { Box, Text } from '../../components';
+import { Box, Button, Text } from '../../components';
 import TextInput from '../../components/Form/TextInput';
-import CheckboxGroup from './CheckboxGroup';
+import { AuthContext } from '../../context/context';
 
 const genders = [
   { value: "male", label: "Male" },
   { value: "female", label: "Female" },
 ]
 
+
 const PersonalInfo = () => {
   const [nama, setNama] = useState('')
   const [email, setEmail] = useState('')
+  const {getUser} = useContext(AuthContext)
   useEffect(() => {
     const getuser = async () => {
-      const userToken = await AsyncStorage.getItem('userToken')
-      const parsed = JSON.parse(userToken)
-      console.log('user', parsed);
-      setNama(parsed.nama)
-      setEmail(parsed.email)
+      const userToken = await getUser()
+      setNama(userToken.nama)
+      setEmail(userToken.email)
     };
     getuser()
   },[])
-  useEffect(() => {
-    console.log('nama',nama)
-  },[nama])
 
   return (
     <ScrollView>
@@ -43,22 +39,28 @@ const PersonalInfo = () => {
         </Box>
         <Box marginBottom="m">
           <TextInput
-            icon="lock"
-            placeholder="Enter your password"
-            autoCompleteType="password"
+            icon="mail"
+            placeholder="Enter your email"
+            autoCompleteType="email"
             autoCapitalize="none"
-            secureTextEntry
+            value={email}
           />
         </Box>
-        <Box marginBottom="m">
+        {/* <Box marginBottom="m">
           <TextInput
             icon="map-pin"
             placeholder="Address"
             autoCapitalize="none"
             autoCompleteType="street-address"
           />
+        </Box> */}
+        {/* <CheckboxGroup options={genders} radio /> */}
+        <Box alignItems="center" marginBottom="s">
+        <Button
+            variant="primary"
+            label="Edit"
+          />
         </Box>
-        <CheckboxGroup options={genders} radio />
       </Box>
     </ScrollView>
   );

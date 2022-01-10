@@ -1,6 +1,6 @@
-import { CompositeNavigationProp, RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { DrawerNavigationProp } from "@react-navigation/drawer"
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { CompositeNavigationProp, RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export interface AuthNavigationProps<
 	RouteName extends keyof AuthenticationRoutes
@@ -37,5 +37,7 @@ export type HomeRoutes = {
 	TransactionHistory: undefined
 	EditProfile: undefined
 	Settings: undefined
-	Cart: undefined;
+	Cart: undefined
+	HomeScreen: undefined
+	Details: undefined
 }

@@ -1,19 +1,15 @@
-import React, { useContext, useRef, useState } from "react";
-import { TextInput as RNTextInput } from "react-native";
-import { CommonActions } from "@react-navigation/native";
-import { BorderlessButton } from "react-native-gesture-handler";
-
-import { Container, Button, Text, Box } from "../components";
-import { AuthNavigationProps } from "../components/Navigation";
-import TextInput from "../components/Form/TextInput";
-import Checkbox from "../components/Form/Checkbox";
-import Footer from "./components/Footer";
-import axios, { AxiosError } from 'axios';
-import * as Yup from "yup";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AuthContext } from "../context/context";
+import React, { useContext, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { TextInput as RNTextInput } from 'react-native';
+import { BorderlessButton } from 'react-native-gesture-handler';
+import * as Yup from 'yup';
+
+import { Box, Button, Container, Text } from '../components';
+import TextInput from '../components/Form/TextInput';
+import { AuthNavigationProps } from '../components/Navigation';
+import { AuthContext } from '../context/context';
+import Footer from './components/Footer';
 
 
 const LoginSchema = Yup.object().shape({
@@ -25,7 +21,6 @@ const LoginSchema = Yup.object().shape({
 });
 
 const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
-
 
   const { sigIn } = useContext(AuthContext)
   const onSubmit = async (data)=> {
@@ -51,15 +46,6 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
       onPress={() => navigation.navigate("SignUp")}
     />
   );
-
-
-  // const [data, isData] = useState({
-  //   email: '',
-  //   password: ''
-  // })
-
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
 
   return (
     <Container pattern={0} {...{ footer }}>

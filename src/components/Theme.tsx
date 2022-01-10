@@ -1,12 +1,12 @@
-import React, { ReactNode } from "react";
-import { Dimensions, ViewStyle, TextStyle, ImageStyle } from "react-native";
 import {
-  createTheme,
-  createText,
   createBox,
-  useTheme as useReTheme,
+  createText,
+  createTheme,
   ThemeProvider as ReStyleThemeProvider,
-} from "@shopify/restyle";
+  useTheme as useReTheme,
+} from '@shopify/restyle';
+import React, { ReactNode } from 'react';
+import { Dimensions, ImageStyle, TextStyle, ViewStyle } from 'react-native';
 
 const { width } = Dimensions.get("window");
 export const aspectRatio = width / 374;
@@ -49,6 +49,7 @@ const theme = createTheme({
     m: 16,
     l: 24,
     xl: 40,
+    xxl: 70
   },
   borderRadii: {
     s: 4,
@@ -85,6 +86,12 @@ const theme = createTheme({
       fontFamily: "SFProDisplay-Regular",
       fontSize: 16,
       lineHeight: 24,
+      color: "body",
+    },
+    body1: {
+      fontFamily: "SFProDisplay-Regular",
+      fontSize: 15,
+      lineHeight: 14,
       color: "body",
     },
     button: {
