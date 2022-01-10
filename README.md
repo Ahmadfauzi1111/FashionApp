@@ -10,6 +10,6 @@ Fashion App Belanja Baju, Celana, Dll, Sistem ini menggunakan React Native Expo
 - Cek Product
 
 ## Screenshot Sistem
-https://github.com/Ahmadfauzi1111/FashionApp/blob/main/assets/1%20(1).jpeg?raw=true
+
 
 
