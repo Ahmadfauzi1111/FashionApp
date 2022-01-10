@@ -102,7 +102,7 @@ const Drawer = () => {
           />
           </Box>
           <Box>
-            <Text variant="title1" marginTop="xxl" textAlign="center">{nama}</Text>
+            <Text variant="title1" marginTop="m" textAlign="center">{nama}</Text>
             <Text variant="body1" textAlign="center">{email}</Text>
           </Box>
           {items.map(item => <DrawerItem key={item.icon} {...item} />)}
